@@ -1,0 +1,1 @@
+# mangoplate-scrapy-spider
