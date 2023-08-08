@@ -4,7 +4,6 @@ import pymongo
 
 class MangoplatePvSpider(scrapy.Spider):
     name = "mangoplate_pv"
-    # start_urls = ["https://www.mangoplate.com/en/restaurants/nTE88co48T"]
 
     def __init__(self):
         self.conn = pymongo.MongoClient(
@@ -32,12 +31,11 @@ class MangoplatePvSpider(scrapy.Spider):
         skip_string = ['', 'Restaurant detailed information', 'Menu']
 
         result = [i for i in data_list if i not in skip_string and i.isascii()]
-        # print(result)
 
         fields = ['Address', 'Phone Number', 'Cuisine' 'Price Range', 'Parking', 'Business Hours', 'Break Time', 'Last Order', 'Day Off']
+
         # Create an empty dictionary to store key-value pairs
         info_dict = {}
-
         # Loop through the fields list and check if each item is in the result list
         for k in fields:
             if k in result and result.index(k) + 1 < len(result):
@@ -50,8 +48,6 @@ class MangoplatePvSpider(scrapy.Spider):
         # Assign the filtered data to the item dynamically
         for key, value in info_dict.items():
             item[key.lower().replace(" ", "_")] = value
-        # # Print the scraped and filtered data
-        # print(info_dict)
 
         try:
             item['website'] = response.css(".under_line::attr(href)").get().replace("\n", "").strip()
@@ -61,7 +57,6 @@ class MangoplatePvSpider(scrapy.Spider):
             item['image_url'] = response.css(".center-croping::attr(src)").get().replace("\n", "").strip()
         except Exception as e:
             item['image_url'] = ""
-
 
         # Save the item to MongoDB
         self.pvcollection.update_one(
